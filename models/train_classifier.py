@@ -20,11 +20,12 @@ nltk.download(['wordnet', 'punkt', 'stopwords'])
 def load_data(database_filepath):
     # load data from database
     engine = create_engine('sqlite:///'+database_filepath)
-    table_name=(engine.table_names())
-    df = pd.read_sql_table(table_name[0],engine)
+    #table_name=(engine.table_names())
+    df = pd.read_sql_table('DisasterResponse',engine)
     X = df.message
-    y = df.iloc[:,5:]
-    return X,y
+    y = df.iloc[:,4:]
+    category_names = y.columns
+    return X,y,category_names
     
     pass
 
@@ -49,18 +50,17 @@ def build_model():
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(RandomForestClassifier()))])
     parameters =  {
-    'clf__estimator__n_estimators': [10,12,15],
-    'clf__estimator__min_samples_split': [2, 5, 6],
+    'clf__estimator__n_estimators': [10],
+    'clf__estimator__min_samples_split': [2],
     'clf__estimator__random_state':[42]
     }
-    cv = GridSearchCV(pipeline, param_grid=parameters)
-    cv.fit(X_train, y_train)
-    model=cv.best_estimator_
+    
+    model=GridSearchCV(pipeline, param_grid=parameters)
     
     return model
 
 
-def evaluate_model(model, X_test, Y_test):
+def evaluate_model(model, X_test, Y_test, category_names):
     y_pred = model.predict(X_test)
     for i,value in enumerate(Y_test):
         print('category_name:',Y_test.columns[i])
@@ -78,7 +78,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y,category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
@@ -88,7 +88,7 @@ def main():
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test)
+        evaluate_model(model, X_test, Y_test, category_names)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)

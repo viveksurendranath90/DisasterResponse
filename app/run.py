@@ -2,6 +2,7 @@ import json
 import plotly
 import pandas as pd
 
+
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
@@ -26,11 +27,12 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/YourDatabaseName.db')
-df = pd.read_sql_table('YourTableName', engine)
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
+table_name=(engine.table_names())
+df = pd.read_sql_table('DisasterResponse',engine)
 
 # load model
-model = joblib.load("../models/your_model_name.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -40,7 +42,7 @@ def index():
     
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
+    genre_counts = df.groupby('genre').count()['messsage']
     genre_names = list(genre_counts.index)
     
     # create visuals
@@ -93,7 +95,8 @@ def go():
 
 
 def main():
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    
+    app.run(host='0.0.0.0', port=8080, debug=True)
 
 
 if __name__ == '__main__':
