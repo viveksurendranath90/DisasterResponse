@@ -15,7 +15,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split,  GridSearchCV 
 from sklearn.metrics import classification_report
-nltk.download(['wordnet', 'punkt', 'stopwords'])
+nltk.download((['wordnet', 'punkt', 'stopwords','omw-1.4']))
 
 def load_data(database_filepath):
     # load data from database
