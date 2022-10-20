@@ -18,10 +18,18 @@ from sklearn.metrics import classification_report
 nltk.download((['wordnet', 'punkt', 'stopwords','omw-1.4']))
 
 def load_data(database_filepath):
-    # load data from database
+    """Load database and define feature and target variables.
+    Args:
+    database_filepath: path of dataset containing sqlite database.
+    Returns: 
+    X: Disaster messages.
+    y: Category dataset of disaster messages
+    category_names: list of category names"""
     engine = create_engine('sqlite:///'+database_filepath)
-    #table_name=(engine.table_names())
-    df = pd.read_sql_table('DisasterResponse',engine)
+    # read table name from database
+    table_name=(engine.table_names())
+    # load dataset from database
+    df = pd.read_sql_table(table_name[0],engine)
     X = df.message
     y = df.iloc[:,4:]
     category_names = y.columns
@@ -31,14 +39,15 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """A tokenisation function to process messages"""
+    # removing numbers, special characters and transforming text to lower case
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     tokens = word_tokenize(text)
-    
     words = word_tokenize(text)
     stop = stopwords.words("english")
+    # removing stopwords
     words = [t for t in words if t not in stop]
-    
-    # Lemmatization
+    # lemmatization
     lemm = [WordNetLemmatizer().lemmatize(w) for w in words]
     return lemm
 
@@ -49,27 +58,32 @@ def build_model():
     ('vect', CountVectorizer(tokenizer=tokenize)),
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(RandomForestClassifier()))])
+    # initializing parameters for the gridsearch
     parameters =  {
     'clf__estimator__n_estimators': [10],
     'clf__estimator__min_samples_split': [2],
     'clf__estimator__random_state':[42]
     }
-    
+    # Assigning the pipeline model
     model=GridSearchCV(pipeline, param_grid=parameters)
-    
     return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """evaluate the f1 score, precision and recall for each output category of the dataset"""
+    # Predict test labels
     y_pred = model.predict(X_test)
+    # Generating classification report
     for i,value in enumerate(Y_test):
         print('category_name:',Y_test.columns[i])
         print(classification_report(Y_test[value], y_pred[:,i]), '...................................................')
+    # Calculating accuracy of model
     accuracy = (y_pred == Y_test.values).mean()
     print("Accuracy:", accuracy)
 
 
 def save_model(model, model_filepath):
+    """Export model as a pickle file"""
     with open(model_filepath, 'wb') as file:
         pickle.dump(model, file)
 
@@ -78,6 +92,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
+        # load data and perform train text split
         X, Y,category_names = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         

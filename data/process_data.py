@@ -1,15 +1,25 @@
+# import necessary libraries
 import sys
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine 
 
 def load_data(messages_filepath, categories_filepath):
+    """Loading datasets and merging.
+    Args:
+    messages_filepath: path of dataset containing disaster messages.
+    categories_filepath: path of dataset containing labels of messages.
+    Returns: Merged dataset of messages and categories"""
     messages = pd.read_csv((messages_filepath))
     categories = pd.read_csv(categories_filepath)
     return messages.merge(categories,on='id',how='inner')
 
 
 def clean_data(df):
+    """Creating a clean dataset from merged dataset useful for ML pipeline.
+    Args:
+    df: Merged dataset of messages and labels.
+    Returns: Clean dataset without duplicate columns and data"""
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';',expand=True)
     # select the first row of the categories dataframe
@@ -18,7 +28,7 @@ def clean_data(df):
     category_colnames=row.apply(lambda x: x[:-2])
     # rename the columns of `categories`
     categories.columns = category_colnames
-    # Convert category values to just numbers 0 or 1.
+    # Convert category values to just numbers 0 or 1
     for column in categories:
     # set each value to be the last character of the string
         categories[column] = categories[column].apply(lambda x: x[-1])
@@ -34,12 +44,14 @@ def clean_data(df):
 
 
 def save_data(df, database_filename):
+    """Saving dataframe to an sqlite database for ML pipeline."""
     engine = create_engine('sqlite:///{}'.format(database_filename))
     df.to_sql('DisasterResponse', engine,if_exists = 'replace', index=False)
      
 
 
 def main():
+    """Fuction to call load, clean and save functions."""
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]

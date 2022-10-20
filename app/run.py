@@ -8,7 +8,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar,Pie,Layout
 import joblib
 from sqlalchemy import create_engine
 
@@ -41,12 +41,18 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Message count across genre
     genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+    # Genre count across message categories
+    direct_counts = df[df['genre']=='direct'].sum()[df.columns[4:]]
+    news_counts = df[df['genre']=='news'].sum()[df.columns[4:]]
+    social_counts = df[df['genre']=='social'].sum()[df.columns[4:]]
     
+    #Category labels
+    genre_names = list(genre_counts.index)
+    dir_names =list(direct_counts.index)
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # 
     graphs = [
         {
             'data': [
@@ -64,6 +70,42 @@ def index():
                 'xaxis': {
                     'title': "Genre"
                 }
+            }
+        },
+        {
+            'data': [
+                Pie(
+                    labels=dir_names,values=direct_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Direct Genre across message categories',
+   
+            }
+        },
+        {
+            'data': [
+                Pie(
+                    labels=dir_names,values=social_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Social Genre across message categories',
+   
+            }
+        },
+        {
+            'data': [
+                Pie(
+                    labels=dir_names,values=news_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of News Genre across message categories',
+   
             }
         }
     ]
