@@ -28,6 +28,8 @@ def clean_data(df):
     category_colnames=row.apply(lambda x: x[:-2])
     # rename the columns of `categories`
     categories.columns = category_colnames
+    # replace 'related-2' with 'related-1'
+    categories=categories.replace('related-2','related-1')
     # Convert category values to just numbers 0 or 1
     for column in categories:
     # set each value to be the last character of the string
