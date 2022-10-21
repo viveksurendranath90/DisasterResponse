@@ -60,8 +60,8 @@ def build_model():
     ('clf', MultiOutputClassifier(RandomForestClassifier()))])
     # initializing parameters for the gridsearch
     parameters =  {
-    'clf__estimator__n_estimators': [10],
-    'clf__estimator__min_samples_split': [2],
+    'clf__estimator__n_estimators': [10,11,12],
+    'clf__estimator__min_samples_split': [2,4,6],
     'clf__estimator__random_state':[42]
     }
     # Assigning the pipeline model
