@@ -35,6 +35,7 @@ Launch a web app where an emergency worker can input a new message and get class
 Visualizing data using Plotly
 
 ### Tree of folders and files
+``` 
 DisasterResponse
 │   .gitattributes # attributes to pathnames
 │   README.md # Information and instructions about project
@@ -60,7 +61,7 @@ DisasterResponse
 └───models
         classifier.pkl # saved model
         train_classifier.py # ML pipeline
-
+```
 ### Instructions:
 1. Install the required libraries in 'requirements.txt' file from `DisasterResponse` directory
 1. Run the following commands in the project's root directory to set up the database and model.
