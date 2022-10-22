@@ -2,6 +2,7 @@
 import sys
 import re
 import pickle
+from tabnanny import verbose
 import pandas as pd 
 from sqlalchemy import create_engine
 import nltk 
@@ -60,12 +61,12 @@ def build_model():
     ('clf', MultiOutputClassifier(RandomForestClassifier()))])
     # initializing parameters for the gridsearch
     parameters =  {
-    'clf__estimator__n_estimators': [10,11,12],
-    'clf__estimator__min_samples_split': [2,4,6],
+    'clf__estimator__n_estimators': [10,12],
+    'clf__estimator__min_samples_split': [2,4],
     'clf__estimator__random_state':[42]
     }
     # Assigning the pipeline model
-    model=GridSearchCV(pipeline, param_grid=parameters)
+    model=GridSearchCV(pipeline,verbose=3, param_grid=parameters)
     return model
 
 
