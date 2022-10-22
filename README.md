@@ -34,6 +34,33 @@ Extract required data for visualizations
 Launch a web app where an emergency worker can input a new message and get classification results in several categories
 Visualizing data using Plotly
 
+### Tree of folders and files
+DisasterResponse
+│   .gitattributes # attributes to pathnames
+│   README.md # Information and instructions about project
+│   requirements.txt # required libraries to install
+│
+├───app
+│   │   run.py # Flask file that runs app
+│   │   Screenshot_web_app1.png # screenshot of web app
+│   │   Screenshot_web_app2.png # screenshot of web app
+│   │   Screenshot_web_app3.png # screenshot of web app
+│   │
+│   └───templates
+│           go.html # classification result page of web app
+│           master.html # main page of web app
+│
+├───data
+│       DisasterResponse.db # database to save cleaned data
+│       disaster_categories.csv # data to process
+│       disaster_messages.csv # data to process
+│       process_data.py # data cleaning pipeline
+│       
+│
+└───models
+        classifier.pkl # saved model
+        train_classifier.py # ML pipeline
+
 ### Instructions:
 1. Install the required libraries in 'requirements.txt' file from `DisasterResponse` directory
 1. Run the following commands in the project's root directory to set up the database and model.
